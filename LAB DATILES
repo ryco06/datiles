@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CounterApp());
+}
+
+class CounterApp extends StatelessWidget {
+  const CounterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CatalogPage(
+        items: [
+          Product(name: 'Shoes', price: 45000),
+          Product(name: 'Jacket', price: 15000),
+          Product(name: 'Shirt', price: 2500),
+          Product(name: 'Hoodie', price: 1800),
+        ],
+      ),
+    );
+  }
+}
+
+class CatalogPage extends StatelessWidget {
+  const CatalogPage({super.key, required this.items});
+
+  final List<Product> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Product Store'),
+
+        backgroundColor: Colors.pink,
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final w = constraints.maxWidth;
+
+          if (w < 600) {
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (_, i) => ProductTile(product: items[i]),
+            );
+          }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(12),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: w < 840 ? 2 : 3,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 0.8,
+            ),
+            itemCount: items.length,
+            itemBuilder: (_, i) => ProductCard(product: items[i]),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Text('click'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+Widget ProductTile({required Product product}) {
+  return ListTile(
+    title: Text(product.name),
+    subtitle: Text('₱${product.price}'),
+  );
+}
+
+Widget ProductCard({required Product product}) {
+  return Card(
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(product.name, style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 8),
+          Text('₱${product.price}'),
+        ],
+      ),
+    ),
+  );
+}
+
+class Product {
+  final String name;
+  final double price;
+
+  Product({required this.name, required this.price});
+}
